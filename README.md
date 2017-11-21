@@ -5,7 +5,7 @@
 To install, just download the `shake.coffee` file and put it in the `/modules` folder in your Framer project. 
 
 ## Usage
-In Framer studio, write:
+In Framer Studio, write:
 ```javascript
 shake = require("shake").shakeLayer
 ```
