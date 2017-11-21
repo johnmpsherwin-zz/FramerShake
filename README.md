@@ -40,8 +40,6 @@ box.onClick ->
 This will shake the `box` when it’s clicked with the default properties applied.
 To customize the shake animation you can add more properties and change the values:
 
-![](shake_demo.gif)
-
 ```javascript
 box = new Layer
 	borderRadius: 10
@@ -69,5 +67,7 @@ box.on "ShakeEnd", ->
 If you want to improve the module or have anything to add, feel free to open a Pull Request. 🙂
 
 ## Contact
-Say Hi, I’m on <a href="https://twitter.com/johnmpsherwin">Twitter 👋</a>
-Follow me on <a href="https://dribbble.com/johnsherwin">Dribbble 🏀</a>
+Say Hi, I’m on <a href="https://twitter.com/johnmpsherwin">Twitter 👋</a>.
+
+Follow me on <a href="https://dribbble.com/johnsherwin">Dribbble 🏀</a>.
+
