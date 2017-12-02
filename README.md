@@ -7,7 +7,7 @@ To install, just download the `shake.coffee` file and put it in the `/modules` f
 ## Usage
 In Framer Studio, write:
 ```javascript
-shake = require("shake").shakeLayer
+require "shake"
 ```
 
 Now with the module imported, you can shake layers in your prototype. By default, the shake animation has a list of properties that can be modified. They are as follows:
@@ -24,7 +24,7 @@ Now with the module imported, you can shake layers in your prototype. By default
 The only required property is layer, as the function inside the module needs something to shake. Here’s a simple example:
 
 ```javascript
-shake = require("shake").shakeLayer
+require "shake"
 
 box = new Layer
 	borderRadius: 10
@@ -32,9 +32,7 @@ box = new Layer
 	size: 100
 	backgroundColor: '#4728D6'
 
-box.onClick ->
-	shake {
-		layer: this }
+box.onClick -> @shake
 ```
 
 This will shake the `box` when it’s clicked with the default properties applied.
@@ -48,13 +46,13 @@ box = new Layer
 	backgroundColor: '#4728D6'
 
 box.onClick ->
-	shake {
+	@shake
 		layer: this
 		repeat: 2
 		distance: 30
 		direction: 'horizontal'
 		time: .05
-		curve: 'spring(800, 30, 0)' }
+		curve: 'spring(800, 30, 0)'
 ```
 
 To do something after the shake event ends, just write:

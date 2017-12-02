@@ -1,90 +1,53 @@
 Events.ShakeEnd = "ShakeEnd"
 
-exports.shakeLayer = (options) ->
-
-	# Pass options for layer
-	layer = options.layer
-	repeat = options.repeat
-	distance = options.distance
-	direction = options.direction
-	time = options.time
-	curve = options.curve
+Layer.prototype.shake = (options) ->
 
 	# Error handling and set default values
-	if layer is undefined
- 		throw Error "Shake needs a layer. Pass a layer in as an argument -> shake.shakeLayer(layerName). 🐢"
+	throw Error "Shake needs a layer. Pass a layer in as an argument -> shake.shakeLayer(layerName). 🐢" if !options.layer?
 
-	if repeat is undefined
- 		repeat = 1
+	# Default values
+	options.repeat ?= 1
+	options.distance ?= 30
+	options.direction ?= 'vertical'
+	options.time ?= .08
+	options.curve ?= 'spring(300, 25, 10)'
 
- 	if distance is undefined
- 		distance = 30
+	# Direction
+	propertyName = if options.direction is 'vertical' then 'y' else 'x'
 
- 	if direction is undefined
- 		direction = 'vertical'
+	# Position of selected layer
+	origin = options.layer["#{propertyName}"]
 
- 	if time is undefined
- 		time = .08
+	# Shake animation setup
+	animationA = new Animation options.layer,
+		"#{propertyName}": origin - options.distance
+		options: time: options.time
 
- 	if curve is undefined
- 		curve = 'spring(300, 25, 10)'
+	animationB = new Animation options.layer,
+		"#{propertyName}": origin + options.distance
+		options: time: options.time
 
- 	# Shake
-	shake = ->
+	animationC = new Animation options.layer,
+		"#{propertyName}": origin
+		options: time: options.time, curve: options.curve
 
-		# Store direction
-		prop = undefined
+	# Block events while layer is animating
+	animationA.start options.layer.ignoreEvents = true
 
-		if direction == 'vertical'
-			prop = 'y'
-		else
-			prop = 'x'
+	# Set counter. This is compared to the 'repeat' value and is used to stop the shake animation.
+	count = options.repeat
 
-		# Store position of selected layer
-		origin = undefined
+	# Set shakeX animation by chaining animations A, B & C.
+	animationA.on Events.AnimationEnd, animationB.start
+	animationB.on Events.AnimationEnd, animationA.start
+	animationB.on Events.AnimationEnd, ->
+		count -= 1
+		if count is 0
+			animationA.stop()
+			animationC.start()
 
-		if prop == 'y'
-			origin = layer.y
-		else
-			origin = layer.x
+			# Emit 'ShakeEnd' event.
+			@emit Events.ShakeEnd, event
 
-		# Set counter. This is compared to the 'repeat' value and is used to stop the shake animation.
-		count = 0
-
-		# Shake animation setup
-		animationA = new Animation layer,
-			"#{prop}": origin - distance
-			options:
-				time: time
-		animationB = new Animation layer,
-			"#{prop}": origin + distance
-			options:
-				time: time
-		animationC = new Animation layer,
-			"#{prop}": origin
-			options:
-				curve: curve
-				time: time
-
-		# Block events while layer is animating
-		animationA.start(layer.ignoreEvents = true)
-
-		# Set shakeX animation by chaining animations A, B & C.
-		animationA.on Events.AnimationEnd, animationB.start
-		animationB.on Events.AnimationEnd, animationA.start
-		animationB.on Events.AnimationEnd, ->
-			count += 1
-			if count > repeat
-				animationA.stop()
-				animationC.start()
-
-				# Emit 'ShakeEnd' event.
-				@emit(Events.ShakeEnd, event)
-
-		# Reactivate events on layer when animation ends.
-		animationC.on Events.AnimationEnd, ->
-		 	layer.ignoreEvents = false
-
-	# Run the shake animation
-	shake()
-
+	# Reactivate events on layer when animation ends.
+	animationC.on Events.AnimationEnd, -> options.layer.ignoreEvents = false
