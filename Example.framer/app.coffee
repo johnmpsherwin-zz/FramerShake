@@ -1,4 +1,4 @@
-shake = require("shake").shakeLayer
+require "shake"
 
 box = new Layer
 	borderRadius: 10
@@ -7,10 +7,9 @@ box = new Layer
 	backgroundColor: '#4728D6'
 
 box.onClick ->
-	shake {
-		layer: this
+	@shake
 		repeat: 2
 		distance: 30
 		direction: 'horizontal'
 		time: .05
-		curve: 'spring(800, 30, 0)' }
+		curve: 'spring(800, 30, 0)'
